@@ -1,0 +1,6 @@
+{
+    "description": "Mixpanel Track API",
+     "environment": {
+         "DELIVERY_STREAM_NAME": "Mixpanel"
+     }
+}

@@ -7,10 +7,6 @@ const Firehose = new AWS.Firehose();
 const SUCCESS = 1;
 const ERROR   = 0;
 
-const config = {
-    deliveryStreamName: 'Mixpanel' 
-};
-
 // {
 //     "data": "eyJldmVudCI6ICJnYW1lIiwgInByb3BlcnRpZXMiOiB7ImlwIjogIjEyMy4xMjMuMTIzLjEyMyIsICJkaXN0aW5jdF9pZCI6IDEzNzkzLCAidG9rZW4iOiAiZTNiYjQxMDAzMzBjMzU3MjI3NDBmYjhjNmY1YWJkZGMiLCAidGltZSI6IDEyNDU2MTM4ODUsICJhY3Rpb24iOiAicGxheSJ9fQ==",
 //     "ip": "127.0.0.1",
@@ -19,17 +15,7 @@ const config = {
 //     "img": false,
 //     "verbose": false
 // }
-//
-// Example result
-// Success Verbose
-// { "status": 1, "error": null }
-// Success not verbose
-// 1
-// Error verbose
-// {"status": 0, "error": "time, 2554.7 days in the past"}
-// Error not verbose
-// 0
-exports.handler = function handler(event, context, callback) {
+exports.handle = function handle(event, context, callback) {
     const ip = event.ip || "127.0.0.1";
     
     // Not implemented
@@ -61,7 +47,7 @@ exports.handler = function handler(event, context, callback) {
     }
     
     var params = {
-        DeliveryStreamName: config.deliveryStreamName,
+        DeliveryStreamName: process.env.DELIVERY_STREAM_NAME,
         Record: {
             Data: JSON.stringify(data)
         }
