@@ -1,0 +1,126 @@
+---
+swagger: "2.0"
+info:
+  version: "2016-06-19T18:26:05Z"
+  title: "Mixpanel API"
+host: "j58s1s7ffj.execute-api.us-east-1.amazonaws.com"
+basePath: "/v0"
+schemes:
+- "https"
+paths:
+  /:
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /track:
+    get:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "verbose"
+        in: "query"
+        required: false
+        type: "string"
+      - name: "ip"
+        in: "query"
+        required: false
+        type: "string"
+      - name: "redirect"
+        in: "query"
+        required: false
+        type: "string"
+      - name: "callback"
+        in: "query"
+        required: false
+        type: "string"
+      - name: "data"
+        in: "query"
+        required: false
+        type: "string"
+      - name: "img"
+        in: "query"
+        required: false
+        type: "string"
+      - in: "body"
+        name: "Event"
+        required: true
+        schema:
+          $ref: "#/definitions/Event"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Content-Type:
+              type: "string"
+        300:
+          description: "300 response"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+        requestTemplates:
+          application/json: "{\n    \"data\": \"$input.params('data')\",\n    \"ip\"\
+            : #if ($input.params('ipd') != \"\") \"$input.params('ip')\" #else \"\
+            $context.identity.sourceIp\" #end,\n    \"redirect\": \"$input.params('redirect')\"\
+            ,\n    \"callback\": \"$input.params('callback')\",\n    \"img\": #if\
+            \ ($input.params('img') != \"\") true #else false #end,\n    \"verbose\"\
+            : #if ($input.params('verbose') != \"\") true #else false #end\n}"
+        uri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:274507560528:function:Mixpanel-Track/invocations"
+        passthroughBehavior: "when_no_templates"
+        httpMethod: "POST"
+        type: "aws"
+definitions:
+  Empty:
+    type: "object"
+  Event:
+    type: "object"
+    required:
+    - "event"
+    - "properties"
+    properties:
+      event:
+        type: "string"
+      properties:
+        type: "object"
+        properties:
+          distinct_id:
+            type: "string"
+          meta:
+            type: "object"
+            properties: {}
+          ip:
+            type: "string"
+          time:
+            type: "number"
+          token:
+            type: "string"
